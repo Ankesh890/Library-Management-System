@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1>dashboard</h1>
+        <h1>total books:  <span id="book-count">0</span></h1>
+        <label for="categoryfilter">filter by category:</label>
+        <select id="categoryfilter">
+            <option value="ALL">ALL</option>
+            <option value="fiction">fiction</option>
+            <option value="self help">self help</option>
+            <option value="finance">finance</option>
+        </select>
+        <table id="book-table">
+            <thread>
+                <tr>
+                    <th>name</th>
+                    <th>Author</th>
+                    <th>Description</th>
+                    <th>Added date</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Buy</th>
+                    <th>Bookmark</th>
+                    </tr>
+            </thread>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+</html>
+<script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const bookcountelement = document.getElementById("book-count");
+        const categoryfilter = document.getElementById("categoryfilter");
+        const booktablebody = document.querySelector("book-table tbody");
+
+        function displaybooks(books){
+            booktablebody.innerhtml = "";
+            books.forEach((book) => {
+                const row = document.createElement ("tr");
+                row.innerhtml =`
+                <td>${book.bookname}</td>
+                <td>${book.authorname}</td>
+                <td>${book.bookdescription}</td>
+                <td>${book.addedDate}</td>
+                <td>${book.bookcategory}</td>
+                <td>${book.bookprice}</td>
+              <td><button class="buy-btn">Buy </button></td>
+              <td><button class="bookmark-btn">Add</button></td>`;
+              row.querySelector(".buy-btn").addEventListener("click",function () {
+                let buyList = JSON.parse(localStorage.getItem("buy-list")) || [];
+                buyList.push(book);
+                localStroage.setItem("buy-list",JSON.stringify(buyList));
+                let updatedBooks = books.filter((bk) => bk !== book);
+                localstorage.setItem("book-list",JSON.stringify(updatedBooks));
+                displayBooks(updatedBooks);
+                updateBookCount(updatedBooks);
+              });
+
+              row.querySelector(".bookmark-btn").addEventListener("click",function () {
+                let bookmarkList = JSON.parse(localStorage.getItem("bookmark-list")) || [];
+                bookmarkList.push(book);
+                localStroage.setItem("bookmark-list",JSON.stringify(bookmarkList));
+                let updatedBooks = books.filter((bk) => bk !== book);
+                localstorage.setItem("book-list",JSON.stringify(updatedBooks));
+                displayBooks(updatedBooks);
+                updateBookCount(updatedBooks);
+              });
+                bookTableBody.appendChild(row);
+
+               });
+               updateBookCount(books);
+        }
+
+        function updateBookCount(books) {
+            bookCountElement.textContext = books.length;
+            if (books.length === 0) {
+                window.location.href = "buy.html";
+            }
+        }
+      function filterBooksByCategory(category) {
+        const books = JSON.parse(localstorage.getItem("BOOK-LIST")) || [];
+        if (category === "All") {
+            return books;
+            
+        } else {
+            return books.filter((book) => book.bookCategory === category);
+        }
+      }
+
+      categoryFilter.addEventListener("change", function () {
+        const selectedCategory = categoryFilter.value;
+        const filteredBooks = filterBooksByCategory(selectedCategory);
+        displayBooks(filteredBooks);
+      });
+      const allBooks = JSON.parse (localStorage.getItem("book-list")) || [];
+      displaybooks(allBooks);
+    });
+</script>
